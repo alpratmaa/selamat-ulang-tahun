@@ -221,6 +221,36 @@
   .mic-btn:hover { background: rgba(123,79,166,0.6); }
   .mic-status { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 0.4rem; min-height: 1.2em; }
 
+  /* ===== UPLOAD AREA ===== */
+  .upload-area {
+    margin: 0.8rem auto 0.6rem;
+    width: fit-content;
+  }
+  .upload-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.55rem 1.2rem;
+    border-radius: 50px;
+    border: 1.5px dashed rgba(245,200,66,0.45);
+    background: rgba(245,200,66,0.07);
+    color: var(--gold);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'Nunito', sans-serif;
+    user-select: none;
+  }
+  .upload-label:hover {
+    background: rgba(245,200,66,0.16);
+    border-color: var(--gold);
+  }
+  .upload-label.ready {
+    border-style: solid;
+    background: rgba(76,175,80,0.15);
+    border-color: #4caf50;
+    color: #a8f0c9;
+  }
+  .upload-icon { font-size: 1rem; }
+
   /* Confetti burst */
   .confetti-piece {
     position: fixed;
@@ -435,6 +465,7 @@
     .blow-hint { font-size: 0.78rem; }
     .mic-btn   { font-size: 0.76rem; padding: 0.45rem 1rem; }
     .mic-status { font-size: 0.68rem; }
+    .upload-label { font-size: 0.75rem; padding: 0.5rem 1rem; }
 
     /* Gallery: 2 kolom di HP */
     .gallery-section {
@@ -684,9 +715,18 @@
 
     <div class="blow-hint">
       <span>🎤</span> Tiup lilinnya lewat mikrofon ponselmu!
-      <br>
+
+      <!-- Upload lagu kejutan -->
+      <div class="upload-area" id="upload-area">
+        <label for="mp3-input" class="upload-label">
+          <span class="upload-icon">🎵</span>
+          <span id="upload-text">Pilih Lagu Kejutan (MP3/audio)</span>
+        </label>
+        <input type="file" id="mp3-input" accept="audio/*" onchange="handleMp3Upload(event)" style="display:none"/>
+      </div>
+
       <button class="mic-btn" id="mic-btn" onclick="startMic()">🎙️ Aktifkan Mikrofon</button>
-      <div class="mic-status" id="mic-status">Klik tombol untuk mengaktifkan mikrofon</div>
+      <div class="mic-status" id="mic-status">Upload lagu dulu, lalu aktifkan mikrofon 🎶</div>
     </div>
   </div>
 
@@ -872,8 +912,38 @@ function unlockBirthday() {
   }, 1400);
 }
 
+// ===== MP3 UPLOAD =====
+let customAudio = new Audio("happy.mp3");
+customAudio.loop = true;
+customAudio.volume = 1.0; // Audio element untuk lagu user
+
+function handleMp3Upload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // Buat object URL dari file lokal
+  const url = URL.createObjectURL(file);
+
+  // Siapkan audio element
+  if (customAudio) {
+    customAudio.pause();
+    URL.revokeObjectURL(customAudio.src);
+  }
+  customAudio = new Audio(url);
+  customAudio.loop = true;
+  customAudio.volume = 1.0;
+
+  // Update tampilan label
+  const label = document.querySelector('.upload-label');
+  const text  = document.getElementById('upload-text');
+  label.classList.add('ready');
+  // Potong nama file jika terlalu panjang
+  const name = file.name.length > 28 ? file.name.substring(0, 25) + '...' : file.name;
+  text.textContent = '✅ ' + name;
+
+  document.getElementById('mic-status').textContent = 'Lagu siap! Aktifkan mikrofon lalu tiup lilin 🕯️';
+}
 // ===== CANDLE / MIC =====
-let candlesLit = true;
 let micStream = null;
 let analyser = null;
 let micActive = false;
@@ -998,6 +1068,26 @@ function blowOutCandles() {
       "Semoga semua harapanmu terkabul! 🌟"
     </div>
   `;
+
+  // 🎵 Stop lagu selamat ulang tahun
+  if (songTimeoutId) clearTimeout(songTimeoutId);
+  if (sharedCtx) {
+    // Fade out lagu dengan cepat lalu suspend
+    try {
+      const fadeGain = sharedCtx.createGain();
+      fadeGain.gain.setValueAtTime(1, sharedCtx.currentTime);
+      fadeGain.gain.linearRampToValueAtTime(0, sharedCtx.currentTime + 0.6);
+      // Suspend context setelah fade
+      setTimeout(() => { sharedCtx.suspend(); }, 700);
+    } catch(e) { sharedCtx.suspend(); }
+  }
+
+  // 🎶 Putar lagu MP3 user setelah 0.8 detik (setelah fade out)
+  setTimeout(() => {
+    if (customAudio) {
+      customAudio.play().catch(e => console.warn('MP3 play error:', e));
+    }
+  }, 800);
 
   // Stop mic
   if (micStream) { micStream.getTracks().forEach(t => t.stop()); }

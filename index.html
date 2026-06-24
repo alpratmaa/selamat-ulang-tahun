@@ -782,41 +782,51 @@
   }
 })();
 
-// ===== BIRTHDAY SONG (Web Audio API) =====
+// ===== SHARED AUDIO CONTEXT (satu untuk lagu + mikrofon) =====
 const AudioContext = window.AudioContext || window.webkitAudioContext;
-let audioCtx;
+// Satu AudioContext dipakai bersama agar tidak saling mengecilkan volume
+let sharedCtx = null;
+
+function getAudioContext() {
+  if (!sharedCtx) sharedCtx = new AudioContext();
+  // Resume jika di-suspend browser (mobile sering suspend sebelum ada interaksi)
+  if (sharedCtx.state === 'suspended') sharedCtx.resume();
+  return sharedCtx;
+}
 
 // Happy Birthday melody: note frequencies + durations
 const HBD_NOTES = [
-  // "Hap-py birth-day to you"
   [261.6,0.4],[261.6,0.2],[293.7,0.6],[261.6,0.6],[349.2,0.6],[329.6,1.2],
-  // "Hap-py birth-day to you"
   [261.6,0.4],[261.6,0.2],[293.7,0.6],[261.6,0.6],[392.0,0.6],[349.2,1.2],
-  // "Hap-py birth-day dear [name]"
   [261.6,0.4],[261.6,0.2],[523.3,0.6],[440.0,0.6],[349.2,0.6],[329.6,0.6],[293.7,1.2],
-  // "Hap-py birth-day to you"
   [466.2,0.4],[466.2,0.2],[440.0,0.6],[349.2,0.6],[392.0,0.6],[349.2,1.4],
 ];
 
+let songTimeoutId = null;
+
 function playBirthdaySong() {
   try {
-    audioCtx = new AudioContext();
-    let t = audioCtx.currentTime + 0.1;
-    const masterGain = audioCtx.createGain();
-    masterGain.gain.value = 0.3;
-    masterGain.connect(audioCtx.destination);
+    const ctx = getAudioContext();
+    let t = ctx.currentTime + 0.1;
+
+    // Master gain untuk lagu — volume penuh
+    const masterGain = ctx.createGain();
+    masterGain.gain.value = 0.45; // lebih keras dari sebelumnya
+    masterGain.connect(ctx.destination);
 
     function scheduleNote(freq, dur, start) {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain); gain.connect(masterGain);
-      osc.type = 'sine';
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.type = 'triangle'; // lebih hangat dari sine
       osc.frequency.value = freq;
       gain.gain.setValueAtTime(0, start);
-      gain.gain.linearRampToValueAtTime(0.8, start + 0.02);
-      gain.gain.setValueAtTime(0.8, start + dur * 0.8);
+      gain.gain.linearRampToValueAtTime(1.0, start + 0.02);
+      gain.gain.setValueAtTime(1.0, start + dur * 0.78);
       gain.gain.linearRampToValueAtTime(0, start + dur);
-      osc.start(start); osc.stop(start + dur + 0.05);
+      osc.start(start);
+      osc.stop(start + dur + 0.05);
     }
 
     HBD_NOTES.forEach(([freq, dur]) => {
@@ -824,9 +834,9 @@ function playBirthdaySong() {
       t += dur;
     });
 
-    // Restart after melody ends
-    const totalDur = HBD_NOTES.reduce((s,[,d])=>s+d,0);
-    setTimeout(playBirthdaySong, (totalDur + 1) * 1000);
+    // Loop lagu
+    const totalDur = HBD_NOTES.reduce((s,[,d]) => s + d, 0);
+    songTimeoutId = setTimeout(playBirthdaySong, (totalDur + 0.8) * 1000);
   } catch(e) { console.warn('Audio error:', e); }
 }
 
@@ -870,17 +880,23 @@ let micActive = false;
 
 async function startMic() {
   if (micActive) return;
-  const btn = document.getElementById('mic-btn');
+  const btn    = document.getElementById('mic-btn');
   const status = document.getElementById('mic-status');
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     micStream = stream;
-    const ctx = new AudioContext();
+
+    // ✅ Pakai AudioContext yang SAMA dengan lagu — tidak ada konflik volume
+    const ctx = getAudioContext();
     const source = ctx.createMediaStreamSource(stream);
     analyser = ctx.createAnalyser();
     analyser.fftSize = 1024;
     analyser.smoothingTimeConstant = 0.3;
+    // Hubungkan mikrofon ke analyser SAJA (tidak ke destination)
+    // sehingga suara mikrofon tidak ikut keluar dari speaker
     source.connect(analyser);
+    // JANGAN connect analyser ke ctx.destination agar tidak feedback
+
     micActive = true;
     btn.textContent = '🎙️ Mikrofon Aktif!';
     btn.style.background = 'rgba(123,79,166,0.7)';

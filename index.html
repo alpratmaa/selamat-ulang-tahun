@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎂 Selamat Ulang Tahun!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #F5C842;
+    --rose: #E8537A;
+    --blush: #F9A8C9;
+    --cream: #FFF8F0;
+    --deep: #2A1A2E;
+    --purple: #7B4FA6;
+    --lilac: #C9A8E8;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--deep);
+    color: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== PARTICLES ===== */
+  #particles {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.6; }
+    100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ===== PAGE SYSTEM ===== */
+  .page { display: none; position: relative; z-index: 1; min-height: 100vh; }
+  .page.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+  /* ===== PASSWORD PAGE ===== */
+  #page-password {
+    background: radial-gradient(ellipse at center, #3D1F5A 0%, var(--deep) 70%);
+  }
+  .lock-icon {
+    font-size: 4rem; margin-bottom: 1rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+  .pw-box {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(245,200,66,0.3);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    width: min(400px, 90vw);
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+  }
+  .pw-box h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .pw-box p { font-size: 0.9rem; color: var(--lilac); margin-bottom: 1.5rem; }
+  .pw-input {
+    width: 100%;
+    padding: 0.85rem 1.2rem;
+    border-radius: 50px;
+    border: 2px solid rgba(245,200,66,0.3);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    text-align: center;
+    letter-spacing: 0.2em;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  .pw-input:focus { border-color: var(--gold); }
+  .pw-btn {
+    margin-top: 1.2rem;
+    width: 100%;
+    padding: 0.85rem;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(135deg, var(--gold), var(--rose));
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(232,83,122,0.4);
+  }
+  .pw-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,83,122,0.5); }
+  .pw-error {
+    margin-top: 0.8rem;
+    color: #ff6b8a;
+    font-size: 0.85rem;
+    min-height: 1.2em;
+  }
+  .pw-hint { margin-top: 0.8rem; font-size: 0.78rem; color: rgba(255,255,255,0.35); }
+
+  /* ===== BIRTHDAY PAGE ===== */
+  #page-birthday {
+    background: radial-gradient(ellipse at 50% 0%, #4A1E6E 0%, var(--deep) 60%);
+    padding: 2rem 1rem 4rem;
+    gap: 0;
+  }
+
+  /* Header */
+  .bday-header {
+    text-align: center;
+    padding: 2rem 0 1rem;
+    animation: fadeDown 0.8s ease;
+  }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+  .bday-subtitle {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--blush);
+    margin-bottom: 0.5rem;
+  }
+  .bday-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    background: linear-gradient(135deg, var(--gold), var(--blush), var(--lilac));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+  .bday-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 8vw, 5rem);
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(245,200,66,0.5);
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  @keyframes glow {
+    from { text-shadow: 0 0 20px rgba(245,200,66,0.4); }
+    to   { text-shadow: 0 0 50px rgba(245,200,66,0.8), 0 0 80px rgba(245,200,66,0.3); }
+  }
+
+  /* Music bar */
+  .music-bar {
+    display: flex; align-items: center; gap: 0.8rem;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50px;
+    padding: 0.6rem 1.2rem;
+    margin: 1rem auto;
+    width: fit-content;
+    animation: fadeIn 1s 0.5s both;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .music-note { font-size: 1.2rem; animation: bounce 0.6s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-4px)} }
+  .music-label { font-size: 0.85rem; color: var(--lilac); }
+  .music-waves { display: flex; gap: 2px; align-items: center; }
+  .wave-bar {
+    width: 3px; border-radius: 2px;
+    background: var(--blush);
+    animation: wave 0.8s ease infinite alternate;
+  }
+  .wave-bar:nth-child(1){height:8px;animation-delay:0s}
+  .wave-bar:nth-child(2){height:14px;animation-delay:0.1s}
+  .wave-bar:nth-child(3){height:10px;animation-delay:0.2s}
+  .wave-bar:nth-child(4){height:16px;animation-delay:0.05s}
+  .wave-bar:nth-child(5){height:8px;animation-delay:0.15s}
+  @keyframes wave { from{transform:scaleY(0.5)} to{transform:scaleY(1.5)} }
+
+  /* ===== CAKE SECTION ===== */
+  .cake-section {
+    display: flex; flex-direction: column; align-items: center;
+    margin: 1.5rem auto;
+    animation: fadeIn 1s 0.3s both;
+  }
+  .cake-wrap { position: relative; width: 260px; height: 280px; }
+
+  /* SVG Cake */
+  #cake-svg { width: 100%; height: 100%; }
+
+  /* Candle glow */
+  #flames { filter: drop-shadow(0 0 8px #FFD700); }
+
+  /* Blow instruction */
+  .blow-hint {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--lilac);
+    animation: fadeIn 2s 2s both;
+  }
+  .blow-hint span { font-size: 1.2rem; }
+  .mic-btn {
+    margin-top: 0.7rem;
+    padding: 0.5rem 1.3rem;
+    border-radius: 50px;
+    border: 1px solid rgba(201,168,232,0.4);
+    background: rgba(123,79,166,0.3);
+    color: var(--lilac);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mic-btn:hover { background: rgba(123,79,166,0.6); }
+  .mic-status { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 0.4rem; min-height: 1.2em; }
+
+
+  /* Confetti burst */
+  .confetti-piece {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 999;
+    animation: confettiFall 2.5s ease-in forwards;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ===== PHOTO GALLERY ===== */
+  .gallery-section {
+    width: min(900px, 95vw);
+    margin: 2rem auto;
+    animation: fadeIn 1s 0.6s both;
+  }
+  .section-label {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+  .photo-card {
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 1;
+    position: relative;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .photo-card:hover { transform: scale(1.04); box-shadow: 0 12px 30px rgba(0,0,0,0.4); }
+  .photo-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-card .overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(42,26,46,0.7), transparent);
+    opacity: 0; transition: opacity 0.3s;
+    display: flex; align-items: flex-end; padding: 0.8rem;
+    font-size: 0.8rem; color: white;
+  }
+  .photo-card:hover .overlay { opacity: 1; }
+
+  /* placeholder photos using gradient + emoji */
+  .photo-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.5rem;
+    font-size: 2.5rem;
+  }
+  .photo-placeholder p { font-size: 0.75rem; color: rgba(255,255,255,0.4); text-align: center; padding: 0 0.5rem; }
+
+  /* ===== MESSAGES SECTION ===== */
+  .messages-section {
+    width: min(800px, 95vw);
+    margin: 2rem auto;
+    animation: fadeIn 1s 0.8s both;
+  }
+  .msg-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(245,200,66,0.15);
+    border-radius: 20px;
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .msg-card::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 6rem;
+    color: rgba(245,200,66,0.1);
+    position: absolute; top: -1rem; left: 1rem;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .msg-text {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--cream);
+    position: relative; z-index: 1;
+  }
+  .msg-from {
+    margin-top: 1rem;
+    font-size: 0.82rem;
+    color: var(--blush);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    position: relative; z-index: 1;
+  }
+  .msg-emoji { float: right; font-size: 1.4rem; }
+
+  /* ===== FOOTER ===== */
+  .bday-footer {
+    text-align: center;
+    padding: 2rem;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.78rem;
+    animation: fadeIn 1s 1s both;
+  }
+  .heart { color: var(--rose); display: inline-block; animation: heartbeat 1.2s ease-in-out infinite; }
+  @keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+
+  /* Transition overlay */
+  #transition-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: var(--deep);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1rem;
+    pointer-events: none;
+    opacity: 0;
+  }
+  #transition-overlay.show { animation: revealIn 1.5s ease forwards; pointer-events: all; }
+  @keyframes revealIn {
+    0%   { opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; }
+  }
+  .unlock-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    animation: scaleIn 0.5s ease;
+  }
+  @keyframes scaleIn { from{transform:scale(0.6);opacity:0} to{transform:scale(1);opacity:1} }
+
+  /* ===== RESPONSIVE: TABLET (≤768px) ===== */
+  @media (max-width: 768px) {
+    .pw-box {
+      padding: 2rem 1.5rem;
+      border-radius: 20px;
+    }
+    .pw-box h1 { font-size: 1.4rem; }
+    .lock-icon { font-size: 3rem; }
+
+    .bday-header { padding: 1.5rem 1rem 0.5rem; }
+    .bday-subtitle { font-size: 0.8rem; letter-spacing: 0.2em; }
+
+    .music-bar { padding: 0.5rem 1rem; }
+    .music-label { font-size: 0.78rem; }
+
+    .cake-wrap { width: 220px; height: 240px; }
+
+    .gallery-section { margin: 1.5rem auto; }
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .section-label { font-size: 1.2rem; }
+
+    .messages-section { margin: 1.5rem auto; }
+    .msg-card { padding: 1.4rem; }
+    .msg-text { font-size: 0.95rem; line-height: 1.7; }
+    .msg-card::before { font-size: 4rem; }
+  }
+
+  /* ===== RESPONSIVE: MOBILE (≤480px) ===== */
+  @media (max-width: 480px) {
+    body { overflow-x: hidden; }
+
+    /* Password */
+    .pw-box {
+      width: 92vw;
+      padding: 1.8rem 1.2rem;
+      border-radius: 18px;
+    }
+    .pw-box h1 { font-size: 1.25rem; }
+    .pw-box p  { font-size: 0.82rem; }
+    .lock-icon { font-size: 2.6rem; }
+    .pw-input  { font-size: 1rem; padding: 0.75rem 1rem; }
+    .pw-btn    { font-size: 0.92rem; padding: 0.75rem; margin-top: 1rem; }
+    .pw-hint   { font-size: 0.7rem; }
+
+    /* Birthday header */
+    .bday-header { padding: 1.2rem 0.8rem 0.3rem; }
+    .bday-subtitle { font-size: 0.72rem; letter-spacing: 0.15em; }
+    .bday-name { text-shadow: 0 0 20px rgba(245,200,66,0.5); }
+
+    /* Music bar */
+    .music-bar {
+      gap: 0.5rem;
+      padding: 0.45rem 0.9rem;
+      margin: 0.6rem auto;
+    }
+    .music-label { font-size: 0.72rem; }
+    .music-note  { font-size: 1rem; }
+
+    /* Cake — scale down for small screens */
+    .cake-section { margin: 1rem auto; }
+    .cake-wrap {
+      width: min(200px, 70vw);
+      height: auto;
+      aspect-ratio: 260 / 280;
+    }
+    .blow-hint { font-size: 0.78rem; }
+    .mic-btn   { font-size: 0.76rem; padding: 0.45rem 1rem; }
+    .mic-status { font-size: 0.68rem; }
+
+    /* Gallery: 2 kolom di HP */
+    .gallery-section {
+      width: 96vw;
+      margin: 1rem auto;
+      padding: 0 0.25rem;
+    }
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+    }
+    .section-label { font-size: 1.1rem; margin-bottom: 0.9rem; }
+    .photo-placeholder { font-size: 2rem; }
+    .photo-placeholder p { font-size: 0.65rem; }
+
+    /* Overlay caption: selalu tampil di sentuh (touch) */
+    .photo-card .overlay { opacity: 0; }
+    .photo-card:active .overlay { opacity: 1; }
+
+    /* Messages */
+    .messages-section {
+      width: 96vw;
+      margin: 1rem auto;
+    }
+    .msg-card {
+      padding: 1.1rem 1rem;
+      border-radius: 16px;
+      margin-bottom: 0.9rem;
+    }
+    .msg-text { font-size: 0.88rem; line-height: 1.65; }
+    .msg-from { font-size: 0.76rem; }
+    .msg-card::before { font-size: 3.5rem; top: -0.5rem; }
+
+    /* Footer */
+    .bday-footer { padding: 1.5rem 1rem; font-size: 0.72rem; }
+
+    /* Transition overlay */
+    .unlock-text { font-size: 1.4rem; }
+  }
+
+  /* ===== RESPONSIVE: VERY SMALL (≤360px) ===== */
+  @media (max-width: 360px) {
+    .pw-box { padding: 1.4rem 1rem; }
+    .pw-box h1 { font-size: 1.1rem; }
+    .cake-wrap { width: 85vw; }
+    .gallery-grid { gap: 0.45rem; }
+    .msg-text { font-size: 0.82rem; }
+  }
+
+  /* ===== TOUCH: disable hover scale on mobile ===== */
+  @media (hover: none) {
+    .photo-card:hover { transform: none; box-shadow: none; }
+    .photo-card:active { transform: scale(1.02); }
+    .pw-btn:hover { transform: none; box-shadow: 0 4px 20px rgba(232,83,122,0.4); }
+    .pw-btn:active { transform: scale(0.98); }
+    .mic-btn:hover { background: rgba(123,79,166,0.3); }
+    .mic-btn:active { background: rgba(123,79,166,0.7); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div id="particles"></div>
+
+<!-- Transition overlay -->
+<div id="transition-overlay">
+  <div style="font-size:3rem">🎉</div>
+  <div class="unlock-text">Selamat Datang!</div>
+  <div style="color:var(--lilac);font-size:0.9rem">Mempersiapkan kejutan untukmu...</div>
+</div>
+
+<!-- ===== PAGE 1: PASSWORD ===== -->
+<div id="page-password" class="page active">
+  <div class="pw-box">
+    <div class="lock-icon">🔐</div>
+    <h1>Halaman Spesial</h1>
+    <p>Masukkan password untuk membuka kejutan ulang tahunmu 🎁</p>
+    <input class="pw-input" type="password" id="pw-input" placeholder="••••••••" autocomplete="off" />
+    <button class="pw-btn" onclick="checkPassword()">Buka Kejutan ✨</button>
+    <div class="pw-error" id="pw-error"></div>
+    <div class="pw-hint">Hint: password adalah tanggal ulang tahunmu (contoh: 1405)</div>
+  </div>
+</div>
+
+<!-- ===== PAGE 2: BIRTHDAY ===== -->
+<div id="page-birthday" class="page">
+
+  <!-- Header -->
+  <div class="bday-header">
+    <div class="bday-subtitle">🎊 Hari Istimewamu 🎊</div>
+    <div class="bday-title">Selamat Ulang Tahun</div>
+    <div class="bday-name" id="bday-name">Sayang 🌸</div>
+  </div>
+
+  <!-- Music indicator -->
+  <div class="music-bar">
+    <span class="music-note">🎵</span>
+    <span class="music-label">Selamat Ulang Tahun</span>
+    <div class="music-waves">
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+    </div>
+  </div>
+
+  <!-- CAKE -->
+  <div class="cake-section">
+    <div class="cake-wrap">
+      <svg id="cake-svg" viewBox="0 0 260 280" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="cakeGrad1" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#F9A8C9"/>
+            <stop offset="100%" stop-color="#E8537A"/>
+          </radialGradient>
+          <radialGradient id="cakeGrad2" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#C9A8E8"/>
+            <stop offset="100%" stop-color="#7B4FA6"/>
+          </radialGradient>
+          <radialGradient id="plateGrad" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#fff9f0"/>
+            <stop offset="100%" stop-color="#f0e0d0"/>
+          </radialGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Plate -->
+        <ellipse cx="130" cy="252" rx="100" ry="12" fill="#c8a882" opacity="0.6"/>
+        <ellipse cx="130" cy="248" rx="98" ry="10" fill="url(#plateGrad)"/>
+
+        <!-- Bottom tier -->
+        <rect x="30" y="190" width="200" height="55" rx="6" fill="url(#cakeGrad1)"/>
+        <ellipse cx="130" cy="190" rx="100" ry="10" fill="#F9C8D8"/>
+        <!-- Stripe deco bottom -->
+        <rect x="30" y="210" width="200" height="6" rx="3" fill="rgba(255,255,255,0.25)"/>
+        <rect x="30" y="228" width="200" height="6" rx="3" fill="rgba(255,255,255,0.25)"/>
+        <!-- Dots bottom -->
+        <circle cx="65"  cy="220" r="5" fill="#F5C842"/>
+        <circle cx="100" cy="220" r="5" fill="white"/>
+        <circle cx="130" cy="220" r="5" fill="#F5C842"/>
+        <circle cx="160" cy="220" r="5" fill="white"/>
+        <circle cx="195" cy="220" r="5" fill="#F5C842"/>
+
+        <!-- Middle tier -->
+        <rect x="55" y="135" width="150" height="58" rx="6" fill="url(#cakeGrad2)"/>
+        <ellipse cx="130" cy="135" rx="75" ry="9" fill="#D4B8F0"/>
+        <rect x="55" y="152" width="150" height="5" rx="2.5" fill="rgba(255,255,255,0.25)"/>
+        <rect x="55" y="170" width="150" height="5" rx="2.5" fill="rgba(255,255,255,0.25)"/>
+        <!-- Hearts middle -->
+        <text x="90"  y="166" font-size="12" text-anchor="middle" fill="#F9A8C9">♥</text>
+        <text x="130" y="166" font-size="12" text-anchor="middle" fill="#F5C842">♥</text>
+        <text x="170" y="166" font-size="12" text-anchor="middle" fill="#F9A8C9">♥</text>
+
+        <!-- Top tier -->
+        <rect x="80" y="88" width="100" height="50" rx="6" fill="url(#cakeGrad1)"/>
+        <ellipse cx="130" cy="88" rx="50" ry="8" fill="#FBC8D8"/>
+        <rect x="80" y="103" width="100" height="5" rx="2.5" fill="rgba(255,255,255,0.3)"/>
+        <rect x="80" y="118" width="100" height="5" rx="2.5" fill="rgba(255,255,255,0.3)"/>
+
+        <!-- Frosting drips top -->
+        <path d="M90,88 Q95,78 100,88" fill="white" opacity="0.7"/>
+        <path d="M110,88 Q115,76 120,88" fill="white" opacity="0.7"/>
+        <path d="M130,88 Q136,74 142,88" fill="white" opacity="0.8"/>
+        <path d="M150,88 Q155,78 160,88" fill="white" opacity="0.7"/>
+
+        <!-- Frosting drips middle -->
+        <path d="M62,135 Q68,122 74,135" fill="white" opacity="0.6"/>
+        <path d="M82,135 Q89,120 96,135" fill="white" opacity="0.7"/>
+        <path d="M106,135 Q112,119 118,135" fill="white" opacity="0.6"/>
+        <path d="M126,135 Q133,118 140,135" fill="white" opacity="0.7"/>
+        <path d="M148,135 Q154,121 160,135" fill="white" opacity="0.6"/>
+        <path d="M168,135 Q174,122 180,135" fill="white" opacity="0.6"/>
+
+        <!-- Frosting drips bottom -->
+        <path d="M36,190 Q44,175 52,190" fill="white" opacity="0.5"/>
+        <path d="M60,190 Q68,172 76,190" fill="white" opacity="0.6"/>
+        <path d="M86,190 Q94,170 102,190" fill="white" opacity="0.5"/>
+        <path d="M108,190 Q117,169 126,190" fill="white" opacity="0.6"/>
+        <path d="M132,190 Q141,169 150,190" fill="white" opacity="0.5"/>
+        <path d="M156,190 Q164,172 172,190" fill="white" opacity="0.6"/>
+        <path d="M178,190 Q186,175 194,190" fill="white" opacity="0.5"/>
+        <path d="M202,190 Q210,177 218,190" fill="white" opacity="0.5"/>
+
+        <!-- CANDLES (drawn on top tier, y=88 is top of cake) -->
+        <!-- Candle 1: x=98, top of cake y=88, candle height=28 → candle from y=60 to y=88 -->
+        <rect x="98" y="60" width="10" height="28" rx="3" fill="#F5C842"/>
+        <rect x="100" y="62" width="3" height="24" rx="1.5" fill="rgba(255,255,255,0.35)"/>
+        <!-- Candle 2: taller, x=125 -->
+        <rect x="125" y="54" width="10" height="34" rx="3" fill="#E8537A"/>
+        <rect x="127" y="56" width="3" height="30" rx="1.5" fill="rgba(255,255,255,0.35)"/>
+        <!-- Candle 3: x=152 -->
+        <rect x="152" y="60" width="10" height="28" rx="3" fill="#C9A8E8"/>
+        <rect x="154" y="62" width="3" height="24" rx="1.5" fill="rgba(255,255,255,0.35)"/>
+
+        <!-- Wicks -->
+        <line x1="103" y1="60" x2="103" y2="55" stroke="#555" stroke-width="1.2"/>
+        <line x1="130" y1="54" x2="130" y2="48" stroke="#555" stroke-width="1.2"/>
+        <line x1="157" y1="60" x2="157" y2="55" stroke="#555" stroke-width="1.2"/>
+
+        <!-- FLAMES group -->
+        <g id="flames">
+          <!-- Flame 1 above candle 1 (wick tip at y=55) -->
+          <g id="flame1">
+            <!-- outer glow -->
+            <ellipse cx="103" cy="46" rx="7" ry="10" fill="#FFD700" opacity="0.4" filter="url(#glow)"/>
+            <!-- main flame -->
+            <path d="M103,56 C99,50 97,44 103,38 C109,44 107,50 103,56Z" fill="#FFD700"/>
+            <path d="M103,56 C100,51 99,46 103,41 C107,46 106,51 103,56Z" fill="#FF8C00"/>
+            <path d="M103,56 C101,52 101,48 103,44 C105,48 105,52 103,56Z" fill="#FF4500"/>
+            <animateTransform attributeName="transform" type="rotate" values="-2,103,56; 2,103,56; -2,103,56" dur="0.18s" repeatCount="indefinite"/>
+          </g>
+          <!-- Flame 2 above candle 2 (taller, wick tip at y=48) -->
+          <g id="flame2">
+            <ellipse cx="130" cy="38" rx="8" ry="12" fill="#FFD700" opacity="0.4" filter="url(#glow)"/>
+            <path d="M130,50 C125,43 123,36 130,28 C137,36 135,43 130,50Z" fill="#FFD700"/>
+            <path d="M130,50 C126,44 125,38 130,32 C135,38 134,44 130,50Z" fill="#FF8C00"/>
+            <path d="M130,50 C128,45 128,40 130,35 C132,40 132,45 130,50Z" fill="#FF4500"/>
+            <animateTransform attributeName="transform" type="rotate" values="2,130,50; -2,130,50; 2,130,50" dur="0.15s" repeatCount="indefinite"/>
+          </g>
+          <!-- Flame 3 above candle 3 (wick tip at y=55) -->
+          <g id="flame3">
+            <ellipse cx="157" cy="46" rx="7" ry="10" fill="#FFD700" opacity="0.4" filter="url(#glow)"/>
+            <path d="M157,56 C153,50 151,44 157,38 C163,44 161,50 157,56Z" fill="#FFD700"/>
+            <path d="M157,56 C154,51 153,46 157,41 C161,46 160,51 157,56Z" fill="#FF8C00"/>
+            <path d="M157,56 C155,52 155,48 157,44 C159,48 159,52 157,56Z" fill="#FF4500"/>
+            <animateTransform attributeName="transform" type="rotate" values="-2,157,56; 2,157,56; -2,157,56" dur="0.2s" repeatCount="indefinite"/>
+          </g>
+        </g>
+
+        <!-- Smoke (visible after blow) -->
+        <g id="smoke" opacity="0">
+          <circle cx="103" cy="48" r="3" fill="rgba(180,180,180,0.6)" class="smoke-puff"/>
+          <circle cx="130" cy="40" r="4" fill="rgba(180,180,180,0.6)" class="smoke-puff"/>
+          <circle cx="157" cy="48" r="3" fill="rgba(180,180,180,0.6)" class="smoke-puff"/>
+        </g>
+
+        <!-- Stars deco -->
+        <text x="40"  y="80"  font-size="14" fill="#F5C842" opacity="0.7">✦</text>
+        <text x="210" y="90"  font-size="12" fill="#F9A8C9" opacity="0.7">✦</text>
+        <text x="25"  y="160" font-size="10" fill="#C9A8E8" opacity="0.6">✦</text>
+        <text x="228" y="155" font-size="11" fill="#F5C842" opacity="0.6">✦</text>
+      </svg>
+    </div>
+
+    <div class="blow-hint">
+      <span>🎤</span> Tiup lilinnya lewat mikrofon ponselmu!
+      <br>
+      <button class="mic-btn" id="mic-btn" onclick="startMic()">🎙️ Aktifkan Mikrofon</button>
+      <div class="mic-status" id="mic-status">Klik tombol untuk mengaktifkan mikrofon</div>
+    </div>
+  </div>
+
+  <!-- PHOTOS -->
+  <div class="gallery-section">
+    <div class="section-label">📸 Kenangan Kita</div>
+    <div class="gallery-grid">
+      <div class="photo-card" style="background:linear-gradient(135deg,#F9A8C9,#E8537A)">
+        <div class="photo-placeholder">🌸<p>Foto kamu di sini</p></div>
+        <div class="overlay">Momen indah bersama 💕</div>
+      </div>
+      <div class="photo-card" style="background:linear-gradient(135deg,#C9A8E8,#7B4FA6)">
+        <div class="photo-placeholder">🌟<p>Foto istimewa</p></div>
+        <div class="overlay">Senyummu menerangi hariku ✨</div>
+      </div>
+      <div class="photo-card" style="background:linear-gradient(135deg,#F5C842,#E8A020)">
+        <div class="photo-placeholder">🎀<p>Momen bersamamu</p></div>
+        <div class="overlay">Kenangan tak terlupakan 🎊</div>
+      </div>
+      <div class="photo-card" style="background:linear-gradient(135deg,#A8E8C9,#2E9E7A)">
+        <div class="photo-placeholder">🌺<p>Foto spesial</p></div>
+        <div class="overlay">Selalu bersama 💚</div>
+      </div>
+      <div class="photo-card" style="background:linear-gradient(135deg,#E8C9A8,#C88840)">
+        <div class="photo-placeholder">🎈<p>Momen bahagia</p></div>
+        <div class="overlay">Kebahagiaan bersamamu 🎈</div>
+      </div>
+      <div class="photo-card" style="background:linear-gradient(135deg,#A8C9E8,#3070C8)">
+        <div class="photo-placeholder">💫<p>Foto kenangan</p></div>
+        <div class="overlay">Selamanya di hatiku 💙</div>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:0.8rem">
+      💡 Ganti placeholder di atas dengan foto aslimu di kode HTML (tag &lt;img&gt;)
+    </p>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages-section">
+    <div class="section-label">💌 Kata-Kata Untukmu</div>
+
+    <div class="msg-card">
+      <div class="msg-text">
+        Di hari yang istimewa ini, semoga setiap langkahmu dipenuhi dengan cahaya, setiap mimpimu menjadi kenyataan, dan setiap harimu lebih indah dari sebelumnya. Kamu adalah orang yang luar biasa, dan dunia menjadi lebih berwarna karena kehadiranmu. 🌸
+      </div>
+      <div class="msg-from">— Dengan sepenuh hati <span class="msg-emoji">💕</span></div>
+    </div>
+
+    <div class="msg-card">
+      <div class="msg-text">
+        Selamat ulang tahun! Semoga di usiamu yang baru ini, kamu diberi kesehatan, kebahagiaan, dan semua yang kamu impikan. Kamu layak mendapatkan semua hal indah yang ada di dunia ini. Terus bersinar seperti bintang yang kamu memang ✨
+      </div>
+      <div class="msg-from">— Selalu bersamamu <span class="msg-emoji">🌟</span></div>
+    </div>
+
+    <div class="msg-card">
+      <div class="msg-text">
+        Terima kasih sudah menjadi orang yang selalu membuat hari-hariku lebih bermakna. Kehadiranmu adalah hadiah terbesar yang pernah aku terima. Semoga panjang umur, murah rezeki, dan selalu dikelilingi orang-orang yang menyayangimu. Happy Birthday! 🎂🎉
+      </div>
+      <div class="msg-from">— Untuk selama-lamanya <span class="msg-emoji">🎂</span></div>
+    </div>
+  </div>
+
+  <div class="bday-footer">
+    Dibuat dengan <span class="heart">♥</span> khusus untukmu • Hari ini dan selamanya
+  </div>
+</div>
+
+<!-- Hidden audio -->
+<audio id="bday-audio" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// ===== PARTICLES =====
+(function spawnParticles() {
+  const container = document.getElementById('particles');
+  const colors = ['#F5C842','#E8537A','#F9A8C9','#C9A8E8','#7B4FA6','#fff'];
+  const shapes = ['●','★','♥','✦','✿'];
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 8 + 4;
+    p.style.cssText = `
+      left:${Math.random()*100}%;
+      width:${size}px; height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*8+6}s;
+      animation-delay:${Math.random()*8}s;
+      border-radius:${Math.random()>0.5?'50%':'4px'};
+    `;
+    container.appendChild(p);
+  }
+})();
+
+// ===== SHARED AUDIO CONTEXT (satu untuk lagu + mikrofon) =====
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+// Satu AudioContext dipakai bersama agar tidak saling mengecilkan volume
+let sharedCtx = null;
+
+function getAudioContext() {
+  if (!sharedCtx) sharedCtx = new AudioContext();
+  // Resume jika di-suspend browser (mobile sering suspend sebelum ada interaksi)
+  if (sharedCtx.state === 'suspended') sharedCtx.resume();
+  return sharedCtx;
+}
+
+// Happy Birthday melody: note frequencies + durations
+const HBD_NOTES = [
+  [261.6,0.4],[261.6,0.2],[293.7,0.6],[261.6,0.6],[349.2,0.6],[329.6,1.2],
+  [261.6,0.4],[261.6,0.2],[293.7,0.6],[261.6,0.6],[392.0,0.6],[349.2,1.2],
+  [261.6,0.4],[261.6,0.2],[523.3,0.6],[440.0,0.6],[349.2,0.6],[329.6,0.6],[293.7,1.2],
+  [466.2,0.4],[466.2,0.2],[440.0,0.6],[349.2,0.6],[392.0,0.6],[349.2,1.4],
+];
+
+let songTimeoutId = null;
+
+function playBirthdaySong() {
+  try {
+    const ctx = getAudioContext();
+    let t = ctx.currentTime + 0.1;
+
+    // Master gain untuk lagu — volume penuh
+    const masterGain = ctx.createGain();
+    masterGain.gain.value = 0.45; // lebih keras dari sebelumnya
+    masterGain.connect(ctx.destination);
+
+    function scheduleNote(freq, dur, start) {
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(masterGain);
+      osc.type = 'triangle'; // lebih hangat dari sine
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(1.0, start + 0.02);
+      gain.gain.setValueAtTime(1.0, start + dur * 0.78);
+      gain.gain.linearRampToValueAtTime(0, start + dur);
+      osc.start(start);
+      osc.stop(start + dur + 0.05);
+    }
+
+    HBD_NOTES.forEach(([freq, dur]) => {
+      scheduleNote(freq, dur * 0.9, t);
+      t += dur;
+    });
+
+    // Loop lagu
+    const totalDur = HBD_NOTES.reduce((s,[,d]) => s + d, 0);
+    songTimeoutId = setTimeout(playBirthdaySong, (totalDur + 0.8) * 1000);
+  } catch(e) { console.warn('Audio error:', e); }
+}
+
+// ===== PASSWORD CHECK =====
+const PASSWORD = '1405'; // ← Ganti password di sini!
+const NAME = 'Sayang 🌸'; // ← Ganti nama di sini!
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  const err = document.getElementById('pw-error');
+  if (val === PASSWORD) {
+    err.textContent = '';
+    unlockBirthday();
+  } else {
+    err.textContent = '❌ Password salah, coba lagi ya!';
+    document.getElementById('pw-input').classList.add('shake');
+    setTimeout(() => document.getElementById('pw-input').classList.remove('shake'), 500);
+  }
+}
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+
+function unlockBirthday() {
+  const overlay = document.getElementById('transition-overlay');
+  overlay.classList.add('show');
+  setTimeout(() => {
+    document.getElementById('page-password').classList.remove('active');
+    document.getElementById('page-birthday').classList.add('active');
+    document.getElementById('bday-name').textContent = NAME;
+    playBirthdaySong();
+    overlay.classList.remove('show');
+  }, 1400);
+}
+
+// ===== MP3 KEJUTAN =====
+// Ganti "happy.mp3" dengan nama file MP3 kamu (taruh satu folder dengan HTML ini)
+let customAudio = new Audio("happy.mp3");
+customAudio.loop = true;
+customAudio.volume = 1.0;
+// ===== CANDLE / MIC =====
+let candlesLit = true;
+let micStream = null;
+let analyser = null;
+let micActive = false;
+
+async function startMic() {
+  if (micActive) return;
+  const btn    = document.getElementById('mic-btn');
+  const status = document.getElementById('mic-status');
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    micStream = stream;
+
+    // ✅ Pakai AudioContext yang SAMA dengan lagu — tidak ada konflik volume
+    const ctx = getAudioContext();
+    const source = ctx.createMediaStreamSource(stream);
+    analyser = ctx.createAnalyser();
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.3;
+    // Hubungkan mikrofon ke analyser SAJA (tidak ke destination)
+    // sehingga suara mikrofon tidak ikut keluar dari speaker
+    source.connect(analyser);
+    // JANGAN connect analyser ke ctx.destination agar tidak feedback
+
+    micActive = true;
+    btn.textContent = '🎙️ Mikrofon Aktif!';
+    btn.style.background = 'rgba(123,79,166,0.7)';
+    btn.style.color = '#a8f0c9';
+    status.textContent = 'Tiup keras ke mikrofon untuk memadamkan lilin 🌬️';
+    detectBlow();
+  } catch (e) {
+    status.textContent = '⚠️ Tidak dapat mengakses mikrofon. Izinkan akses di browser.';
+  }
+}
+
+function detectBlow() {
+  if (!analyser || !candlesLit) return;
+  const data = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(data);
+
+  // Calculate RMS volume
+  let sum = 0;
+  for (let i = 0; i < data.length; i++) {
+    const v = (data[i] - 128) / 128;
+    sum += v * v;
+  }
+  const rms = Math.sqrt(sum / data.length);
+
+  if (rms > 0.22) { // Blow threshold
+    blowOutCandles();
+    return;
+  }
+  requestAnimationFrame(detectBlow);
+}
+
+function blowOutCandles() {
+  if (!candlesLit) return;
+  candlesLit = false;
+
+  // Hide flames with fade
+  const flames = document.getElementById('flames');
+  const smoke  = document.getElementById('smoke');
+
+  // Fade out flames via SVG animate
+  flames.style.transition = 'opacity 0.5s ease';
+  flames.style.opacity = '0';
+
+  setTimeout(() => {
+    flames.style.display = 'none';
+
+    // Show smoke puffs
+    smoke.style.transition = 'opacity 0.3s';
+    smoke.style.opacity = '1';
+
+    // Animate smoke puffs rising & fading with SMIL
+    document.querySelectorAll('.smoke-puff').forEach((p, i) => {
+      const startCY = parseInt(p.getAttribute('cy'));
+      const endCY   = startCY - 30;
+      const startR  = parseInt(p.getAttribute('r'));
+
+      // cy animation
+      const animCY = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      animCY.setAttribute('attributeName','cy');
+      animCY.setAttribute('from', startCY);
+      animCY.setAttribute('to',   endCY);
+      animCY.setAttribute('dur',  '1.2s');
+      animCY.setAttribute('begin','0s');
+      animCY.setAttribute('fill','freeze');
+      p.appendChild(animCY);
+
+      // r animation
+      const animR = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      animR.setAttribute('attributeName','r');
+      animR.setAttribute('from', startR);
+      animR.setAttribute('to',   startR * 3);
+      animR.setAttribute('dur',  '1.2s');
+      animR.setAttribute('begin','0s');
+      animR.setAttribute('fill','freeze');
+      p.appendChild(animR);
+
+      // opacity animation
+      const animO = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      animO.setAttribute('attributeName','opacity');
+      animO.setAttribute('from','0.6');
+      animO.setAttribute('to','0');
+      animO.setAttribute('dur','1.2s');
+      animO.setAttribute('begin','0s');
+      animO.setAttribute('fill','freeze');
+      p.appendChild(animO);
+    });
+
+    setTimeout(() => { smoke.style.display = 'none'; }, 1300);
+  }, 500);
+
+  // Confetti burst!
+  spawnConfetti();
+
+  // Update hint
+  const hint = document.querySelector('.blow-hint');
+  hint.innerHTML = `
+    <span>🎉</span> Selamat! Lilinnya padam!<br>
+    <div style="margin-top:0.5rem;color:var(--gold);font-family:'Playfair Display',serif;font-style:italic;">
+      "Semoga semua harapanmu terkabul! 🌟"
+    </div>
+  `;
+
+  // 🎵 Stop lagu selamat ulang tahun
+  if (songTimeoutId) clearTimeout(songTimeoutId);
+  if (sharedCtx) {
+    // Fade out lagu dengan cepat lalu suspend
+    try {
+      const fadeGain = sharedCtx.createGain();
+      fadeGain.gain.setValueAtTime(1, sharedCtx.currentTime);
+      fadeGain.gain.linearRampToValueAtTime(0, sharedCtx.currentTime + 0.6);
+      // Suspend context setelah fade
+      setTimeout(() => { sharedCtx.suspend(); }, 700);
+    } catch(e) { sharedCtx.suspend(); }
+  }
+
+  // 🎶 Putar lagu MP3 user setelah 0.8 detik (setelah fade out)
+  setTimeout(() => {
+    if (customAudio) {
+      customAudio.play().catch(e => console.warn('MP3 play error:', e));
+    }
+  }, 800);
+
+  // Stop mic
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); }
+}
+
+function spawnConfetti() {
+  const colors = ['#F5C842','#E8537A','#F9A8C9','#C9A8E8','#7B4FA6','#fff','#a8f0c9'];
+  for (let i = 0; i < 80; i++) {
+    setTimeout(() => {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.cssText = `
+        left:${Math.random()*100}vw;
+        top:-10px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        width:${Math.random()*10+5}px;
+        height:${Math.random()*10+5}px;
+        border-radius:${Math.random()>0.5?'50%':'2px'};
+        animation-duration:${Math.random()*1.5+1.5}s;
+        animation-delay:0s;
+      `;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 3000);
+    }, i * 25);
+  }
+}
+
+// Shake animation for wrong password
+const style = document.createElement('style');
+style.textContent = `
+  .shake { animation: shake 0.5s ease !important; }
+  @keyframes shake {
+    0%,100%{transform:translateX(0)}
+    20%{transform:translateX(-8px)}
+    40%{transform:translateX(8px)}
+    60%{transform:translateX(-6px)}
+    80%{transform:translateX(6px)}
+  }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
